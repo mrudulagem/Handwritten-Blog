@@ -1,9 +1,9 @@
 # Product Requirements Document
 ## Marathi Handwritten Blog Platform
 
-**Version:** 2.0
-**Date:** May 27, 2026
-**Status:** Draft — Updated to reflect existing codebase
+**Version:** 2.1
+**Date:** June 2, 2026
+**Status:** Draft — M0 Repo Cleanup complete
 
 ---
 
@@ -42,9 +42,15 @@ A working proof-of-concept has been built at [github.com/mrudulagem/Handwritten-
 
 | File | Description |
 |---|---|
-| `app.py` | Flask backend. Handles image upload, saves to `static/uploads/`, calls Google Cloud Vision `text_detection`, renders result |
+| `app.py` | Flask backend. Handles image upload, saves to `static/uploads/`, calls Google Cloud Vision `text_detection`, renders result. Credentials loaded via `python-dotenv`. |
 | `templates/index.html` | Minimal upload form — file picker and submit button, no styling |
 | `templates/result.html` | Shows uploaded image and extracted Marathi text side by side using Jinja2 |
+| `requirements.txt` | Python dependencies: `flask`, `google-cloud-vision`, `werkzeug`, `python-dotenv` |
+| `.env` | Local environment variables (not committed). Sets `GOOGLE_APPLICATION_CREDENTIALS` to the key file path. |
+| `env.example` | Template for `.env` — safe to commit, shows required variables without values |
+| `.gitignore` | Excludes `.env`, `*.json`, `key/`, `static/uploads/`, `__pycache__/`, `.vscode/`, etc. |
+| `.vscode/settings.json` | VS Code workspace setting: `python.terminal.useEnvFile: true` to auto-load `.env` in terminal |
+| `key/` | Google Cloud service account JSON key (git-ignored, never committed) |
 
 ### 2.2 Current Stack
 
@@ -57,12 +63,12 @@ A working proof-of-concept has been built at [github.com/mrudulagem/Handwritten-
 
 ### 2.3 Known Issues to Fix
 
-| # | Issue | Location | Fix Required |
+| # | Issue | Location | Status |
 |---|---|---|---|
-| 1 | Google Cloud credentials path is hardcoded to a local Windows path | `app.py` line 5 | Move to environment variable (`GOOGLE_APPLICATION_CREDENTIALS`) |
-| 2 | No `requirements.txt` exists | Repo root | Create `requirements.txt` with all dependencies |
-| 3 | README is basic and manually written | `README.md` | Rewrite with proper setup instructions, architecture overview, and usage guide |
-| 4 | No `.env` or `.gitignore` | Repo root | Add both — `.gitignore` must exclude credentials file and `.env` |
+| 1 | Google Cloud credentials path was hardcoded to a local Windows path | `app.py` | ✅ Fixed — moved to `GOOGLE_APPLICATION_CREDENTIALS` env var, loaded via `python-dotenv` |
+| 2 | No `requirements.txt` existed | Repo root | ✅ Fixed — `requirements.txt` created with all dependencies |
+| 3 | README is basic and manually written | `README.md` | 🟡 In progress |
+| 4 | No `.env` or `.gitignore` | Repo root | ✅ Fixed — both added; `.gitignore` excludes `.env`, `*.json`, `key/`, uploads, and `.vscode/` |
 
 ---
 
@@ -165,10 +171,10 @@ The README should include:
 
 | ID | Requirement | Priority | Status |
 |---|---|---|---|
-| AUTH-1 | Author can log in with email and password | Must Have | 🔴 Not started |
-| AUTH-2 | Session persists across browser sessions | Must Have | 🔴 Not started |
+| AUTH-1 | Author can log in with email and password | Must Have | ✅ Done |
+| AUTH-2 | Session persists across browser sessions | Must Have | ✅ Done |
 | AUTH-3 | Forgot password / reset via email | Must Have | 🔴 Not started |
-| AUTH-4 | Only authenticated author can access upload/admin area | Must Have | 🔴 Not started |
+| AUTH-4 | Only authenticated author can access upload/admin area | Must Have | ✅ Done |
 | AUTH-5 | Public blog pages accessible without login | Must Have | 🔴 Not started |
 
 > No self-registration. Single author account seeded at setup time via Supabase dashboard.
@@ -326,8 +332,8 @@ created_at      TIMESTAMP
 
 | Milestone | Scope | Status |
 |---|---|---|
-| **M0 — Repo Cleanup** | Fix hardcoded credentials → env var, add `requirements.txt`, rewrite README, add `.gitignore` | 🔴 Todo |
-| **M1 — Foundation** | Supabase setup, DB schema, auth (login/logout), basic admin dashboard shell | 🔴 Todo |
+| **M0 — Repo Cleanup** | Fix hardcoded credentials → env var, add `requirements.txt`, rewrite README, add `.gitignore` | ✅ Done (README still in progress) |
+| **M1 — Foundation** | Supabase setup, DB schema, auth (login/logout), basic admin dashboard shell | ✅ Done |
 | **M2 — React Frontend Scaffold** | Vite + React project setup, Flask API refactored to return JSON, React upload component consuming the API | 🔴 Todo |
 | **M3 — OCR Pipeline** | Image upload to Supabase Storage, OCR result persisted to DB, side-by-side editor component | 🔴 Todo |
 | **M4 — Publishing** | Publish/unpublish, blog reader view in React, draft management | 🔴 Todo |

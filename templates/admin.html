@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Marathi Blog</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f4f0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #fff;
+            border-bottom: 1px solid #e5e5e5;
+            padding: 0 2rem;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 1.15rem;
+            color: #1a1a1a;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .header-right a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+
+        .header-right a:hover { text-decoration: underline; }
+
+        main {
+            max-width: 860px;
+            margin: 2.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .top-bar h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #6366f1;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.15s;
+        }
+
+        .btn:hover { background: #4f46e5; }
+
+        .empty {
+            background: #fff;
+            border-radius: 10px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #999;
+            font-size: 0.95rem;
+            border: 1px dashed #ddd;
+        }
+
+        .empty .hint {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 1.4rem;
+            color: #ccc;
+            margin-bottom: 0.75rem;
+        }
+
+        table {
+            width: 100%;
+            background: #fff;
+            border-radius: 10px;
+            border-collapse: collapse;
+            overflow: hidden;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+        }
+
+        th {
+            text-align: left;
+            padding: 0.75rem 1.1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #888;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        td {
+            padding: 0.9rem 1.1rem;
+            font-size: 0.9rem;
+            color: #333;
+            border-bottom: 1px solid #f7f7f7;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .title-cell {
+            font-family: 'Noto Sans Devanagari', sans-serif;
+            font-size: 1rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.published { background: #dcfce7; color: #15803d; }
+        .badge.draft     { background: #f3f4f6; color: #6b7280; }
+
+        .date { color: #aaa; font-size: 0.82rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>मराठी ब्लॉग — Admin</h1>
+        <div class="header-right">
+            <span>{{ user_email }}</span>
+            <a href="/logout">Sign out</a>
+        </div>
+    </header>
+
+    <main>
+        <div class="top-bar">
+            <h2>All Posts</h2>
+            <a href="/" class="btn">+ New post</a>
+        </div>
+
+        {% if posts %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td class="title-cell">{{ post.title_marathi }}</td>
+                    <td>
+                        <span class="badge {{ post.status }}">{{ post.status }}</span>
+                    </td>
+                    <td class="date">{{ post.created_at[:10] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty">
+            <div class="hint">✍️</div>
+            No posts yet — upload a handwritten article to get started.
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>

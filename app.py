@@ -19,10 +19,11 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-supabase: Client = create_client(
-    os.getenv('SUPABASE_URL'),
-    os.getenv('SUPABASE_SERVICE_ROLE_KEY')
-)
+_supabase_url = os.getenv('SUPABASE_URL')
+_supabase_key = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+if not _supabase_url or not _supabase_key:
+    raise RuntimeError('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables must be set')
+supabase: Client = create_client(_supabase_url, _supabase_key)
 
 
 # M1 scaffolding: Flask server-side sessions work for the current Jinja2 app.

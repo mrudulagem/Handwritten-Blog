@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
+from io import BytesIO
 import os
 
 os.environ.setdefault('SECRET_KEY', 'test-secret-key')
@@ -13,7 +14,6 @@ def client():
         mock_create.return_value = MagicMock()
         import app as flask_app
         flask_app.app.config['TESTING'] = True
-        flask_app.app.config['WTF_CSRF_ENABLED'] = False
         with flask_app.app.test_client() as c:
             yield c, flask_app.supabase
 
@@ -84,10 +84,12 @@ def test_session_is_permanent_after_login(client):
     mock_user = MagicMock()
     mock_user.user.id = 'user-123'
     mock_user.user.email = 'author@example.com'
+    mock_supabase.auth.sign_in_with_password.side_effect = None
     mock_supabase.auth.sign_in_with_password.return_value = mock_user
 
     response = c.post('/login', data={'email': 'author@example.com', 'password': 'correct'})
 
+    assert response.status_code == 302, 'Login did not succeed — cookie check would be meaningless'
     set_cookie = response.headers.get('Set-Cookie', '')
     assert 'Expires' in set_cookie or 'Max-Age' in set_cookie, (
         'Session cookie has no Expires/Max-Age — session.permanent = True is not taking effect'
@@ -121,7 +123,6 @@ def test_upload_with_empty_filename_returns_400(client):
     with c.session_transaction() as sess:
         sess['user_id'] = 'user-123'
 
-    from io import BytesIO
     response = c.post('/upload', data={'file': (BytesIO(b''), '')},
                       content_type='multipart/form-data')
 

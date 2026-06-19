@@ -279,8 +279,8 @@ The README should include:
 
 | ID | Requirement | Priority | Status |
 |---|---|---|---|
-| ADMIN-1 | Dashboard lists all drafts and published posts | Must Have | 🔴 Not started |
-| ADMIN-2 | Shows status (Draft/Published), title, and date | Must Have | 🔴 Not started |
+| ADMIN-1 | Dashboard lists all drafts and published posts | Must Have | ✅ Done |
+| ADMIN-2 | Shows status (Draft/Published), title, and date | Must Have | ✅ Done |
 | ADMIN-3 | Click any post to return to editor | Must Have | 🔴 Not started |
 | ADMIN-4 | Indicates which posts have/haven't been translated | Should Have | 🔴 Not started |
 

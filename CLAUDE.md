@@ -2,7 +2,7 @@
 
 > This file is automatically read by Claude Code at the start of every session.
 > It is also meant to be shared with Claude in claude.ai chat to keep both in sync.
-> **Keep this file CURRENT, not historical.** For history of what happened in each milestone, see `docs/milestone-log.md`.
+> **Keep this file CURRENT, not historical.** For history of what happened in each milestone, see `Documents/milestone-log.md`.
 
 ---
 
@@ -86,8 +86,9 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 ## How This Project Is Managed
 
 - **PRD.md** — authoritative source of requirements, priorities, and milestone scope. Update its status table when a milestone completes.
-- **`.claude/agents/`** — structured subagents (PM, Principal Engineer, QA, Code Reviewer, and a Documentarian) for working on this project inside Claude Code. Use them via `@agent-name`.
-- **`docs/milestone-log.md`** — historical log of what was actually done in each milestone, written by the Documentarian subagent. Read this for "how did we solve X" — don't put this detail here in CLAUDE.md.
+- **`.claude/agents/`** — structured subagents (PM, Principal Engineer, QA, Code Reviewer, Documentarian, Test Writer) for working on this project inside Claude Code. Use them via `@agent-name`.
+- **`Documents/milestone-log.md`** — historical log of what was actually done in each milestone, written by the Documentarian subagent. Read this for "how did we solve X" — don't put this detail here in CLAUDE.md.
+- **`Documents/qa-log.md`** — persistent QA findings log, appended by the QA subagent after each test run. Read this to see what has been manually verified.
 
 ---
 
@@ -95,5 +96,5 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 
 - At the **start** of a session, read this file plus `PRD.md` before doing anything else.
 - At the **end** of a session (or after completing a meaningful chunk of work), update the "Current State" section above — milestone status, next steps, known gaps. Keep it current, overwrite stale info rather than appending.
-- Do NOT duplicate detailed change history here — that belongs in `docs/milestone-log.md` via the Documentarian subagent.
+- Do NOT duplicate detailed change history here — that belongs in `Documents/milestone-log.md` via the Documentarian subagent.
 - If you make a new architecture decision not listed above, add it to "Key Decisions & Why" so future sessions (and the user's Claude.ai chat) know about it.

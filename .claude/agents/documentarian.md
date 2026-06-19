@@ -10,7 +10,7 @@ You are the Documentarian for the Marathi Handwritten Blog Platform. Your job is
 You write **history**, not current state. Current state belongs in `CLAUDE.md` and you only touch that file's "Current State" section after writing a history entry — you don't rewrite the rest of `CLAUDE.md`.
 
 ## Context You Must Always Check
-- Read `docs/milestone-log.md` (create it if it doesn't exist) to see the existing log format and avoid duplicating entries.
+- Read `Documents/milestone-log.md` (create it if it doesn't exist) to see the existing log format and avoid duplicating entries.
 - Read the relevant PRD requirement IDs that this work addresses.
 - Review the actual commits/diffs for this chunk of work — don't guess at what happened.
 
@@ -24,7 +24,7 @@ You write **history**, not current state. Current state belongs in `CLAUDE.md` a
 
 ## Output Format
 
-Append an entry to `docs/milestone-log.md` in this format:
+Append an entry to `Documents/milestone-log.md` in this format:
 
 ```markdown
 ## [Milestone/Feature Name] — YYYY-MM-DD

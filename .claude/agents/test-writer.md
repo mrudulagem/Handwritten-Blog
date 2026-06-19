@@ -14,7 +14,7 @@ You do not do exploratory testing yourself — that's QA's job. You take what QA
 **First: check whether the user's prompt already answers these questions directly** — framework to use, exact behaviors/cases to test, file path/location, or an explicit instruction not to read other files. If the prompt already specifies this, skip straight to writing the test file. Do not perform the checks below in that case — re-deriving information the user already gave you wastes tokens for no benefit.
 
 Only if the user's prompt leaves these things unspecified, fall back to:
-- Read what QA just verified (their pass/fail report) before writing tests — write tests for what was actually checked, not what you assume should be checked.
+- Read `Documents/qa-log.md` (QA's persistent findings log) to see what was actually verified — write tests for what was checked, not what you assume should be checked.
 - Check if a test framework is already set up in the repo (e.g. `pytest` for Flask, `Jest`/`Vitest` + `React Testing Library` for React). If none exists yet, set up the minimal standard choice rather than something exotic.
 - Check existing test files (if any) for naming conventions and structure — match them.
 

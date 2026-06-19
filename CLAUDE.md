@@ -17,14 +17,14 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 ## Current State (update this section every session)
 
 **Last updated:** 2026-06-19
-**Current milestone:** M1 (Foundation) — partially verified, see gaps below
-**Next milestone:** M2 (React Frontend Scaffold)
+**Current milestone:** M2 (React Frontend Scaffold) — not started
+**Next milestone:** M3 (OCR Pipeline)
 
 ### Milestone Status
 | Milestone | Status |
 |---|---|
-| M0 — Repo Cleanup | ✅ Done |
-| M1 — Foundation (Supabase, DB schema, auth) | 🟡 Partial — AUTH-1, AUTH-4, DB schema verified; AUTH-2/3/5 not done |
+| M0 — Repo Cleanup | ✅ Done — audited and verified 2026-06-19 |
+| M1 — Foundation (Supabase, DB schema, auth) | ✅ Done — all M1 scope requirements verified 2026-06-19 |
 | M2 — React Frontend Scaffold | 🔴 Not started |
 | M3 — OCR Pipeline | 🔴 Not started |
 | M4 — Publishing | 🔴 Not started |
@@ -33,10 +33,11 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 | M7 — Accuracy Loop | 🔴 Not started |
 
 ### Known Gaps / TODOs
-- **AUTH-2** (session persists across browser close): `session.permanent = True` never set in `app.py`. Flask sessions die when browser closes. One-line fix.
-- **AUTH-3** (forgot password / reset via email): No route, no template, no Supabase reset call. Not in M1 scope per PRD.
-- **AUTH-5** (public blog pages without login): No public routes exist. `/` is admin-only. Blocked on M4 (blog reader).
-- No React frontend exists yet — current frontend is Flask + Jinja2 templates only
+- **AUTH-3** (forgot password): not in M1 scope; Supabase Auth supports reset flows natively when needed
+- **AUTH-5** (public blog pages without login): M4 scope — no public routes until blog reader is built
+- `static/uploads/jeevan_marathi.jpg` tracked in git (pre-gitignore); deferred by user — `git rm --cached` to clean up
+- `requirements.txt` clean install in fresh venv not formally tested — verify before first Render deployment
+- No React frontend yet — current frontend is Flask + Jinja2 templates (M1 scaffolding, replaced in M2)
 
 ---
 
@@ -61,6 +62,8 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 - **React chosen for frontend:** author wants to learn React, and the editor/blog/toggle UI is naturally component-driven.
 - **Google Cloud Vision over alternatives:** already proven in the v0 prototype to handle Marathi handwriting well. Not re-evaluating unless accuracy becomes a problem.
 - **Single author, no multi-user:** intentionally out of scope for v1. Don't add registration flows.
+- **Flask session auth is M1-only scaffolding:** Replace with JWT validation (`supabase.auth.get_user(token)`) in M2 — React authenticates directly with Supabase JS and sends Bearer tokens to Flask. Do not build M2 features on top of the Flask session approach.
+- **Env var startup validation pattern:** All required env vars (`SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`) raise `RuntimeError` at startup if missing. Follow this pattern for any new required vars.
 
 ---
 

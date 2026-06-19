@@ -32,9 +32,17 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 | M6 — Polish | 🔴 Not started |
 | M7 — Accuracy Loop | 🔴 Not started |
 
+### Test Coverage
+- **`tests/test_app.py`** — 10 tests, code-reviewer approved 2026-06-19:
+  - Auth suite (8 tests): login success/failure, auth guards on `/`, `/admin`, `/upload`, logout session clearing, and AUTH-2 regression (permanent session cookie verified via `Set-Cookie` header)
+  - Upload validation (2 tests): no file → 400, empty filename → 400
+- **`conftest.py`** (repo root) — enables `import app` from `tests/` via sys.path
+- Supabase and Google Cloud Vision fully mocked — no real API calls per test run
+
 ### Known Gaps / TODOs
 - **AUTH-3** (forgot password): not in M1 scope; Supabase Auth supports reset flows natively when needed
 - **AUTH-5** (public blog pages without login): M4 scope — no public routes until blog reader is built
+- **OCR-5**: No `try/except` around the Vision API call in `app.py:94-100` — a Vision API timeout or quota error returns a 500 with no user-facing message. Rewrite and add regression test in M3 when the upload route is overhauled.
 - `static/uploads/jeevan_marathi.jpg` tracked in git (pre-gitignore); deferred by user — `git rm --cached` to clean up
 - `requirements.txt` clean install in fresh venv not formally tested — verify before first Render deployment
 - No React frontend yet — current frontend is Flask + Jinja2 templates (M1 scaffolding, replaced in M2)

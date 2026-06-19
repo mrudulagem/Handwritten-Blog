@@ -40,6 +40,7 @@ def login():
         password = request.form.get('password', '')
         try:
             response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            session.permanent = True
             session['user_id'] = response.user.id
             session['user_email'] = response.user.email
             return redirect(url_for('admin'))

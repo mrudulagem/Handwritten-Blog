@@ -6,8 +6,8 @@ A personal web application that converts handwritten Marathi articles into publi
 
 ## Current Status
 
-**This repo is currently at M0 — the OCR proof of concept.**
-The core pipeline (upload image → extract Marathi text) is working. The full blog platform is under active development. See the [Roadmap](#roadmap) below.
+**This repo is currently at M1 — Foundation complete (auth, DB schema, admin dashboard).**
+The core OCR pipeline is working. Supabase auth (login/logout) and the admin dashboard shell are in place. The React frontend and full blog platform are under active development. See the [Roadmap](#roadmap) below.
 
 ---
 
@@ -77,10 +77,13 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Open `.env` and set the path to your GCP credentials file:
+Open `.env` and fill in all required values:
 
 ```
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/your/gcp-keyfile.json
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SECRET_KEY=a-long-random-string-for-flask-sessions
 ```
 
 > ⚠️ Never commit your `.env` file or your credentials JSON. Both are in `.gitignore`.
@@ -108,13 +111,18 @@ Visit `http://localhost:5000` in your browser.
 
 ```
 Handwritten-Blog/
-├── app.py                  # Flask backend, OCR pipeline
+├── app.py                  # Flask backend — routes, auth, OCR pipeline
 ├── requirements.txt        # Python dependencies
 ├── .env.example            # Template for environment variables
 ├── .gitignore
+├── CLAUDE.md               # Project context for Claude Code sessions
+├── supabase/
+│   └── schema.sql          # DB schema — posts and post_images tables
 ├── static/
 │   └── uploads/            # Uploaded images (local, not committed)
 └── templates/
+    ├── login.html          # Login form (Supabase Auth)
+    ├── admin.html          # Admin dashboard — post list
     ├── index.html          # Upload form
     └── result.html         # Side-by-side image + extracted text
 ```
@@ -126,7 +134,7 @@ Handwritten-Blog/
 | Milestone | Description | Status |
 |---|---|---|
 | M0 — Cleanup | Env vars, requirements.txt, README, .gitignore | ✅ Done |
-| M1 — Foundation | Supabase setup, DB schema, auth (login/logout) | 🔴 Todo |
+| M1 — Foundation | Supabase setup, DB schema, auth (login/logout) | 🟡 Partial — AUTH-1, AUTH-4, DB schema done; AUTH-3, AUTH-5 deferred |
 | M2 — React Frontend | Vite + React scaffold, Flask refactored to JSON API | 🔴 Todo |
 | M3 — OCR Pipeline | Upload to Supabase Storage, persist OCR to DB, editor UI | 🔴 Todo |
 | M4 — Publishing | Publish/unpublish, blog reader view, draft management | 🔴 Todo |

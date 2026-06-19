@@ -91,3 +91,42 @@
 **Action for M3:** Wrap `client.text_detection(image=image)` in try/except, render a meaningful error to the author, and provide a retry option (OCR-5). Add a regression test at that point using a mocked Vision API failure.
 
 ---
+
+## M1 — Test Coverage — 2026-06-19
+
+**Requirement(s) addressed:** AUTH-1, AUTH-2 (regression), AUTH-4; upload route input validation (UPLOAD-1 partial); OCR-5 gap documented
+
+**What was built:**
+- `conftest.py` (repo root) — empty file whose presence causes pytest to add the repo root to `sys.path`, allowing `import app` from `tests/`
+- `tests/test_app.py` — 10 tests covering the full M1 auth flow and upload input validation:
+  - `test_login_success_redirects_to_admin` — POST /login with valid credentials → 302 to /admin
+  - `test_login_failure_shows_error` — POST /login with wrong credentials → 200 with "Invalid email or password" flash
+  - `test_admin_route_blocked_when_logged_out` — GET /admin without session → 302 to /login
+  - `test_root_route_blocked_when_logged_out` — GET / without session → 302 to /login
+  - `test_upload_route_blocked_when_logged_out` — POST /upload without session → 302 to /login
+  - `test_admin_accessible_when_logged_in` — GET /admin with session set → 200
+  - `test_session_is_permanent_after_login` — AUTH-2 regression: asserts login response is 302 AND Set-Cookie contains `Expires` or `Max-Age` (permanent session cookie)
+  - `test_logout_clears_session` — GET /logout clears `user_id` from session
+  - `test_upload_with_no_file_returns_400` — POST /upload with no file key → 400 "No file uploaded"
+  - `test_upload_with_empty_filename_returns_400` — POST /upload with empty filename → 400 "No file selected"
+- `tests/test_logout_only.py` — standalone single test for logout behaviour, written as an isolated demonstration; covers the same case as `test_logout_clears_session` in `test_app.py`
+
+**Key decisions:**
+- Patched `supabase.create_client` (not `app.supabase` directly) — intercepts the Supabase client at import time so the app module initialises without real credentials; side effect is that `app.supabase` is a single shared mock across all tests due to Python module caching
+- Supabase and Google Cloud Vision mocked entirely — no real API calls, no cost per run; upload 400 tests don't reach the Vision API so no Vision mock was needed there
+- `session.permanent = True` regression test checks `Set-Cookie` response header (not `sess.permanent` via `session_transaction`) — the session transaction approach returned a fresh empty session object that didn't preserve the `permanent` flag; checking the header is the correct observable behaviour
+- Auth tests inject session state directly via `session_transaction()` rather than going through the login flow — keeps tests independent and fast
+
+**Verified by QA:** All 10 tests pass (`pytest tests/test_app.py -v`). Run confirmed at commit `6872a6f`.
+
+**Reviewed by Code Reviewer:** Yes — review on 2026-06-19 found three issues, all fixed before push:
+1. AUTH-2 test was a false positive: `side_effect = Exception` from `test_login_failure_shows_error` leaked into `test_session_is_permanent_after_login` via the shared mock; failed login produced a `Set-Cookie: Max-Age=0` header that satisfied the assertion. Fixed by (a) adding `assert response.status_code == 302` before the cookie check and (b) clearing `side_effect` explicitly at the start of the test.
+2. `from io import BytesIO` was inside a test function body — moved to top-level imports.
+3. `WTF_CSRF_ENABLED` config was set in the fixture but Flask-WTF is not a dependency — removed.
+
+**Known gaps / deferred:**
+- `tests/test_logout_only.py` duplicates `test_logout_clears_session` in `test_app.py`; can be deleted or kept as an isolated smoke test — no action required now
+- Shared mock object (`app.supabase`) across all tests: any test that sets `side_effect` must clear it before the next test that uses the mock differently. Current workaround is explicit `side_effect = None` in affected tests. Could be fixed in M2 by patching `app.supabase` directly so each fixture gets a fresh mock.
+- No tests for the Vision API happy path or error path in `/upload` — intentionally deferred to M3 when the route is rewritten (Supabase Storage, DB persistence). OCR-5 error handling test also deferred to M3 (see entry above).
+
+---

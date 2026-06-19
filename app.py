@@ -9,7 +9,11 @@ from supabase import create_client, Client
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key')
+
+_secret_key = os.getenv('SECRET_KEY')
+if not _secret_key:
+    raise RuntimeError('SECRET_KEY environment variable is not set')
+app.secret_key = _secret_key
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -21,6 +25,9 @@ supabase: Client = create_client(
 )
 
 
+# M1 scaffolding: Flask server-side sessions work for the current Jinja2 app.
+# Replace with JWT validation (supabase.auth.get_user(token)) in M2 when
+# React authenticates directly via Supabase JS and sends Bearer tokens to Flask.
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):

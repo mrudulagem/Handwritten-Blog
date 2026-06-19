@@ -103,3 +103,27 @@ def test_logout_clears_session(client):
 
     with c.session_transaction() as sess:
         assert 'user_id' not in sess
+
+
+def test_upload_with_no_file_returns_400(client):
+    c, _ = client
+    with c.session_transaction() as sess:
+        sess['user_id'] = 'user-123'
+
+    response = c.post('/upload', data={})
+
+    assert response.status_code == 400
+    assert b'No file uploaded' in response.data
+
+
+def test_upload_with_empty_filename_returns_400(client):
+    c, _ = client
+    with c.session_transaction() as sess:
+        sess['user_id'] = 'user-123'
+
+    from io import BytesIO
+    response = c.post('/upload', data={'file': (BytesIO(b''), '')},
+                      content_type='multipart/form-data')
+
+    assert response.status_code == 400
+    assert b'No file selected' in response.data

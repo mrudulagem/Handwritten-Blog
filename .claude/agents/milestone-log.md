@@ -81,3 +81,13 @@
 - `requirements.txt` clean install in fresh venv not formally tested — verify before first Render deployment in M2
 
 ---
+
+## Deferred to M3 — OCR-5 error handling — 2026-06-19
+
+**Tagged against:** OCR-5 (If OCR fails, author is notified with retry option — Must Have)
+
+**Gap:** `/upload` in `app.py:98-101` has no `try/except` around the Google Cloud Vision API call. A timeout, quota error, or network failure causes an unhandled exception and a generic 500 response. There is no user-facing error message and no retry option.
+
+**Action for M3:** Wrap `client.text_detection(image=image)` in try/except, render a meaningful error to the author, and provide a retry option (OCR-5). Add a regression test at that point using a mocked Vision API failure.
+
+---

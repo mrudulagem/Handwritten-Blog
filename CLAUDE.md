@@ -123,9 +123,9 @@ pm → principal-engineer → Superpowers writing-plans (save plans to Documents
 
 **Where these rules override Superpowers' defaults:**
 - `writing-plans`: save to `Documents/plans/YYYY-MM-DD-<feature-name>.md`, not `docs/superpowers/plans/`.
-- `writing-plans`: when the plan is saved, go to step 4 instead of offering to start execution.
+- `writing-plans`: when the plan is saved, go to the next step for this change size (step 4 for the full workflow, TDD implementation for a feature) instead of offering to start execution.
 - `subagent-driven-development` setup: skip `using-git-worktrees`.
-- `subagent-driven-development` Final Review: skip it. Report the "Rulings I made" list from its Finish section, then go to step 6, so `qa` and `code-reviewer` act as the final checks. Its per-task reviews may still run, but they never replace `code-reviewer`.
+- `subagent-driven-development` Final Review: skip it. Report the "Rulings I made" list from its Finish section, then go to the next step for this change size (`qa` for the full workflow, `code-reviewer` for a feature), so our agents act as the final checks. Its per-task reviews may still run, but they never replace `code-reviewer`.
 - `subagent-driven-development` Finish: do not run `finishing-a-development-branch`.
 
 **Scale the workflow to the change size:**
@@ -133,7 +133,7 @@ pm → principal-engineer → Superpowers writing-plans (save plans to Documents
 | Change | Workflow |
 |---|---|
 | Small fix | `code-reviewer` only |
-| Feature | `principal-engineer`, TDD implementation, `code-reviewer` |
+| Feature | `principal-engineer` → `writing-plans` → TDD implementation → `code-reviewer` (no plan judge for features) |
 | Milestone, or anything auth/security-related | Full workflow |
 
 ---

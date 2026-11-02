@@ -86,9 +86,55 @@ Full requirements live in `PRD.md` — always check it for the authoritative req
 ## How This Project Is Managed
 
 - **PRD.md** — authoritative source of requirements, priorities, and milestone scope. Update its status table when a milestone completes.
-- **`.claude/agents/`** — structured subagents (PM, Principal Engineer, QA, Code Reviewer, Documentarian, Test Writer) for working on this project inside Claude Code. Use them via `@agent-name`.
+- **`.claude/agents/`** — structured subagents (PM, Principal Engineer, QA, Code Reviewer, Documentarian, Test Writer) for working on this project inside Claude Code. Use them via `@agent-name`. They work alongside the **Superpowers** plugin (`superpowers@claude-plugins-official`, installed per user account, not stored in this repo), which handles planning and TDD implementation; plans are saved in `Documents/plans/`. See "Development Workflow" below for who does what.
 - **`Documents/milestone-log.md`** — historical log of what was actually done in each milestone, written by the Documentarian subagent. Read this for "how did we solve X" — don't put this detail here in CLAUDE.md.
 - **`Documents/qa-log.md`** — persistent QA findings log, appended by the QA subagent after each test run. Read this to see what has been manually verified.
+
+---
+
+## Development Workflow
+
+Full workflow, in this exact order:
+
+```
+pm → principal-engineer → Superpowers writing-plans (save plans to Documents/plans/)
+   → principal-engineer reviews the plan as judge (APPROVE/REVISE)
+   → Superpowers subagent-driven-development with TDD
+   → qa → test-writer (gap-filling only) → code-reviewer → documentarian
+```
+
+| Step | Owner | Output |
+|---|---|---|
+| 1. Scope | `pm` | What is in and out of scope, checked against the PRD |
+| 2. Design | `principal-engineer` | Design recommendation |
+| 3. Plan | Superpowers `writing-plans` | Plan saved in `Documents/plans/` |
+| 4. Judge the plan | `principal-engineer` (Plan Review Mode) | APPROVE or REVISE. Max 2 revision rounds, then escalate to the author |
+| 5. Build | Superpowers `subagent-driven-development` with TDD | Code plus unit tests |
+| 6. Verify | `qa` | Findings in `Documents/qa-log.md` |
+| 7. Fill test gaps | `test-writer` | Regression tests for QA's bugs and edge-case gaps only |
+| 8. Final gate | `code-reviewer` | Sign-off before pushing, secrets checked first |
+| 9. Record | `documentarian` | Entry in `Documents/milestone-log.md`, `CLAUDE.md` current state |
+
+**Rules:**
+- Use OUR agents for scoping, design, QA, code review, and documentation.
+- Do NOT use Superpowers' brainstorming in place of `pm`/`principal-engineer`. `writing-plans` starts from their output.
+- Do NOT use Superpowers' code review in place of our `code-reviewer` (ours checks for secrets first).
+- Do not use git worktrees — work directly on the current branch. This is the author's standing consent for `subagent-driven-development` to run on the current branch.
+
+**Where these rules override Superpowers' defaults:**
+- `writing-plans`: save to `Documents/plans/YYYY-MM-DD-<feature-name>.md`, not `docs/superpowers/plans/`.
+- `writing-plans`: when the plan is saved, go to step 4 instead of offering to start execution.
+- `subagent-driven-development` setup: skip `using-git-worktrees`.
+- `subagent-driven-development` Final Review: skip it. Report the "Rulings I made" list from its Finish section, then go to step 6, so `qa` and `code-reviewer` act as the final checks. Its per-task reviews may still run, but they never replace `code-reviewer`.
+- `subagent-driven-development` Finish: do not run `finishing-a-development-branch`.
+
+**Scale the workflow to the change size:**
+
+| Change | Workflow |
+|---|---|
+| Small fix | `code-reviewer` only |
+| Feature | `principal-engineer`, TDD implementation, `code-reviewer` |
+| Milestone, or anything auth/security-related | Full workflow |
 
 ---
 
